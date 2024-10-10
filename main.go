@@ -7,10 +7,10 @@ import (
 	"log"
 	"project-root/api"
 	"project-root/config"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 )
@@ -44,17 +44,18 @@ func main() {
 	config.InitRedis()
 
 	router := gin.Default()
-	api.RegisterBookingRoutes(router)
-	api.RegisterBrigadeRoutes(router)
-	go SubscribeToNotifications(config.RedisClient)
+	// Настройка CORS middleware
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8001"}, // Разрешите ваш фронтенд URL
+		AllowOrigins:     []string{"http://127.0.0.1:8081"}, // Разрешить запросы с вашего фронтенда
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
 	}))
+	api.RegisterBookingRoutes(router)
+	api.RegisterBrigadeRoutes(router)
+	api.RegisterNotificationRoutes(router)
+	go SubscribeToNotifications(config.RedisClient)
 
 	go func() {
 		pubsub := config.RedisClient.Subscribe(context.Background(), "booking_notifications")
