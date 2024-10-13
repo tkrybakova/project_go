@@ -13,6 +13,7 @@ func RegisterBrigadeRoutes(router *gin.Engine) {
 	brigade := router.Group("/api/brigades")
 	{
 		brigade.POST("/", createBrigade)
+		brigade.GET("/", getAllBrigades)
 		brigade.GET("/:id", getBrigade)
 		brigade.PUT("/:id", updateBrigade)
 		brigade.DELETE("/:id", deleteBrigade)
@@ -57,6 +58,16 @@ func getBrigade(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, brigade)
+}
+
+func getAllBrigades(c *gin.Context) {
+	brigades, err := services.GetAllBrigades()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, brigades)
 }
 
 func updateBrigade(c *gin.Context) {

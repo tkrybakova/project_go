@@ -64,14 +64,18 @@ func DeleteBrigadeByID(brigadeID int) error {
 
 func CreateTaskInDB(task Task) (Task, error) {
 	sql := `INSERT INTO tasks (brigade_id, description, assigned_at, status) VALUES ($1, $2, $3, $4) RETURNING id`
+	fmt.Println("Inserting task:", task) // Логирование данных задачи
 	err := config.DB.QueryRow(context.Background(), sql, task.BrigadeID, task.Description, task.AssignedAt, task.Status).Scan(&task.ID)
+
 	if err != nil {
+		fmt.Println("Error inserting task:", err) // Логирование ошибки
 		return task, fmt.Errorf("could not insert task: %v", err)
 	}
 
-	// Отправка уведомления
+	// Убедитесь, что уведомление отправляется корректно
 	notification := Notification{Message: fmt.Sprintf("New task created: %d", task.ID)}
 	if err := SendNotification(config.RedisClient, notification); err != nil {
+		fmt.Println("Error sending notification:", err) // Логирование ошибки отправки уведомления
 		return task, fmt.Errorf("could not send notification: %v", err)
 	}
 
@@ -113,4 +117,28 @@ func DeleteTaskByID(taskID int) error {
 		return fmt.Errorf("could not delete task: %v", err)
 	}
 	return nil
+}
+
+func GetAllBrigades() ([]Brigade, error) {
+	var brigades []Brigade
+	sql := `SELECT id, name, status FROM brigades`
+	rows, err := config.DB.Query(context.Background(), sql)
+	if err != nil {
+		return brigades, fmt.Errorf("could not get brigades: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var brigade Brigade
+		if err := rows.Scan(&brigade.ID, &brigade.Name, &brigade.Status); err != nil {
+			return brigades, fmt.Errorf("could not scan brigade: %v", err)
+		}
+		brigades = append(brigades, brigade)
+	}
+
+	if err := rows.Err(); err != nil {
+		return brigades, fmt.Errorf("could not iterate over brigades: %v", err)
+	}
+
+	return brigades, nil
 }
