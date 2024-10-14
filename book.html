@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Booking and Notifications</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Driver Booking and Notifications</h1>
+
+        <!-- Бронирование -->
+        <div class="section">
+            <h2>Бронирование слота</h2>
+            <input id="slotId" placeholder="Введите ID слота" />
+            <input id="date" type="date" placeholder="Выберите дату" />
+            <select id="status">
+                <option value="confirmed">Подтверждено</option>
+                <option value="pending">В ожидании</option>
+                <option value="canceled">Отменено</option>
+            </select>
+            <button onclick="createBooking()">Забронировать слот</button>
+            <pre id="bookingOutput"></pre>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+        <a href="notifications.html"><i class="fas fa-bell"></i> Уведомления</a>
+        <a href="brigades.html"><i class="fas fa-users"></i> Все Бригады</a>
+        <a href="book.html"><i class="fas fa-calendar-check"></i> Забронировать</a>
+        <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

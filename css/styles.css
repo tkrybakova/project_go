@@ -1,0 +1,161 @@
+/* Общий стиль */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(to right, #A53188, #5227F7);
+    color: #fff;
+}
+
+.container {
+    flex: 1; /* Fill the available space */
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    border-radius: 12px;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+    margin: 20px auto; /* Center the container */
+}
+
+h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent input fields */
+    color: #fff;
+}
+
+button {
+    background-color: #613BE7; /* Changed background color for better contrast */
+    color: white; /* Keep text color white for visibility */
+    border: none;
+    border-radius: 6px; /* Keep rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover effect */
+}
+
+button:hover {
+    background-color: #613BE7; /* Darker blue on hover */
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+/* Styles for notifications */
+#notificationsOutput {
+    color: #666;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    max-height: 300px; /* Adjusted for more space */
+    overflow-y: auto;
+}
+
+.notification {
+    background-color: #613BE7; /* Vibrant color */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    transition: opacity 0.5s; /* Smooth transition for opacity */
+}
+
+/* Keyframes for animations */
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Bottom Navigation Styles */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-top: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.bottom-nav a {
+    flex: 1; /* Equal width for all buttons */
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 6px; /* Rounded corners */
+    padding: 10px 0; /* Vertical padding */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover effect */
+    margin: 0 5px; /* Margin between buttons */
+}
+
+.bottom-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Change background on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.bottom-nav i {
+    display: block;
+    font-size: 24px;
+    margin-bottom: 5px; /* Space between icon and text */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 24px;
+    }
+    h2 {
+        font-size: 18px;
+    }
+    input, select, button {
+        padding: 10px;
+        font-size: 14px;
+    }
+    .bottom-nav {
+        padding: 5px 0;
+    }
+    .bottom-nav a {
+        font-size: 12px;
+    }
+}

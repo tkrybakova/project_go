@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Информация о бригадах</h1>
+        <p>Здесь можно создать бригаду и задать им задачи</p>
+        
+        <!-- Интерфейс создания бригады -->
+        <h2>Создание Бригады</h2>
+        <form id="create-brigade-form">
+            <label for="brigade-name">Имя Бригады:</label>
+            <input type="text" id="brigade-name" name="name" required>
+            <label for="brigade-status">Статус:</label>
+            <select id="brigade-status" name="status">
+                <option value="active">Активная</option>
+                <option value="inactive">Неактивная</option>
+            </select>
+            <button type="submit">Создать Бригаду</button>
+        </form>
+        <!-- Список всех бригад -->
+        <h2>Список Бригад</h2>
+        <ul id="brigade-list"></ul>
+
+        <!-- Интерфейс создания задачи -->
+        <h2>Создание Задачи</h2>
+        <form id="create-task-form">
+            <label for="task-brigade-id">ID Бригады:</label>
+            <input type="number" id="task-brigade-id" name="brigade_id" required>
+            
+            <label for="task-description">Описание Задачи:</label>
+            <input type="text" id="task-description" name="description" required>
+            
+            <label for="task-assignedat">Назначение:</label>
+            <input type="text" id="task-assignedat" name="assigned_at" required>
+            
+            <label for="task-status">Статус:</label>
+            <input type="text" id="task-status" name="status" required>
+            
+            <button type="submit">Создать Задачу</button>
+        </form>
+
+        
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+        <a href="notifications.html"><i class="fas fa-bell"></i> Уведомления</a>
+        <a href="brigades.html"><i class="fas fa-users"></i> Все Бригады</a>
+        <a href="book.html"><i class="fas fa-calendar-check"></i> Забронировать</a>
+        <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
