@@ -7,13 +7,15 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Обертка страницы с id для управления отображением -->
+    <div id="content" class="container" style="display: none;">
         <h1>Главная Страница</h1>
         <p>Здесь размещена основная информация.</p>
         <p>Добро пожаловать в систему бронирования водителей. Используйте нижнюю навигацию, чтобы перемещаться по приложениям.</p>
     </div>
 
-    <div class="bottom-nav">
+    <!-- Навигация с id для управления видимостью -->
+    <div id="bottom-nav" class="bottom-nav" style="display: none;">
         <a href="index.html"><i class="fas fa-home"></i> Главная</a>
         <a href="notifications.html"><i class="fas fa-bell"></i> Уведомления</a>
         <a href="brigades.html"><i class="fas fa-users"></i> Все Бригады</a>
@@ -23,5 +25,31 @@
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script src="js/main.js"></script>
+    <script>
+        async function checkAuthentication() {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const response = await fetch("http://localhost:8080/auth/userinfo", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.getElementById("content").style.display = "block";
+                document.getElementById("bottom-nav").style.display = "flex";
+            } else {
+                localStorage.removeItem("token");
+                window.location.href = "login.html";
+            }
+        }
+
+        checkAuthentication();
+    </script>
 </body>
 </html>

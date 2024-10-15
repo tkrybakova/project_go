@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Вход</h1>
+        <form id="loginForm">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Войти</button>
+        </form>
+        <p>Еще не зарегистрированы? <a href="register.html">Создайте аккаунт</a></p>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            
+            const response = await fetch("http://localhost:8080/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                const data = responseData;
+                localStorage.setItem("token", data.token);
+                alert("Вход выполнен успешно!");
+                window.location.href = "index.html";
+            } else {
+                alert("Ошибка входа. Проверьте свои данные и попробуйте снова.");
+            }
+        });
+
+        // Проверяем наличие токена при загрузке страницы
+        window.onload = function() {
+            const token = localStorage.getItem("token");
+            if (token) {
+                window.location.href = "index.html";
+            }
+        };
+    </script>
+</body>
+</html>

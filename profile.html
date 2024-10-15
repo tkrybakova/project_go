@@ -7,18 +7,62 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Главная Страница</h1>
-        <p>Здесь размещена основная информация.</p>
-        <!-- Add more content as needed -->
+    <div class="container" id="content" style="display: none;">
+        <h1>Профиль</h1>
+        <p>Здесь размещена информация об аккаунте</p>
+        
+        <div id="profile">
+            <h2>Профиль пользователя</h2>
+            <p>Имя пользователя: <span id="username"></span></p>
+            <button id="logoutButton">Выйти</button>
+        </div>
     </div>
 
-    <div class="bottom-nav">
+    <div class="bottom-nav" id="bottom-nav" style="display: none;">
         <a href="index.html"><i class="fas fa-home"></i> Главная</a>
         <a href="notifications.html"><i class="fas fa-bell"></i> Уведомления</a>
         <a href="brigades.html"><i class="fas fa-users"></i> Все Бригады</a>
         <a href="book.html"><i class="fas fa-calendar-check"></i> Забронировать</a>
         <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
     </div>
+
+    <script>
+        // Функция для проверки аутентификации и получения данных пользователя
+        async function checkAuthentication() {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "login.html"; // Перенаправление на страницу входа при отсутствии токена
+                return;
+            }
+
+            // Запрос на сервер для проверки и получения данных пользователя
+            const response = await fetch("http://localhost:8080/auth/userinfo", {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("username").textContent = data.username;
+                document.getElementById("content").style.display = "block";
+                document.getElementById("bottom-nav").style.display = "flex";
+            } else {
+                localStorage.removeItem("token"); // Удаление токена при ошибке
+                window.location.href = "login.html";
+            }
+        }
+
+        // Функция для выхода из аккаунта
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "login.html"; // Перенаправление на страницу входа
+        }
+
+        // Добавляем обработчик события для кнопки выхода
+        document.getElementById("logoutButton").addEventListener("click", logout);
+
+        // Запуск проверки аутентификации при загрузке страницы
+        checkAuthentication();
+    </script>
 </body>
 </html>
