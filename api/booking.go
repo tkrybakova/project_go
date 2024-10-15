@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterBookingRoutes(router *gin.Engine) {
+func RegisterBookingRoutes(router gin.IRouter) {
 	booking := router.Group("/api/bookings")
 	{
 		booking.POST("/", createBooking)

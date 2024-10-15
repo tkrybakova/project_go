@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterNotificationRoutes(router *gin.Engine) {
+func RegisterNotificationRoutes(router gin.IRouter) {
 	router.GET("/api/notifications", getNotifications)
 	router.GET("/api/notifications/stream", streamNotifications) // Новый маршрут для потока уведомлений
 }

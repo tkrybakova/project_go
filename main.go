@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"project-root/api"
+	"project-root/auth"
 	"project-root/config"
 
 	"github.com/gin-contrib/cors"
@@ -52,9 +53,14 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
-	api.RegisterBookingRoutes(router)
-	api.RegisterBrigadeRoutes(router)
-	api.RegisterNotificationRoutes(router)
+	api.RegisterAuthRoutes(router)
+	protected := router.Group("/")
+	protected.Use(auth.AuthMiddleware())
+	{
+		api.RegisterBookingRoutes(protected)
+		api.RegisterBrigadeRoutes(protected)
+		api.RegisterNotificationRoutes(protected)
+	}
 	go SubscribeToNotifications(config.RedisClient)
 
 	go func() {

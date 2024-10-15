@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterBrigadeRoutes(router *gin.Engine) {
+func RegisterBrigadeRoutes(router gin.IRouter) {
 	brigade := router.Group("/api/brigades")
 	{
 		brigade.POST("/", createBrigade)
