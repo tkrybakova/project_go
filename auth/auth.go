@@ -30,12 +30,14 @@ func ValidateJWT(tokenString string) (*jwt.Token, error) {
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
-		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Request does not contain an access token"})
+		if tokenString == "" || len(tokenString) < 7 || tokenString[:7] != "Bearer " {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or missing token"})
 			c.Abort()
 			return
 		}
 
+		// Извлекаем токен, убирая префикс "Bearer "
+		tokenString = tokenString[7:]
 		token, err := ValidateJWT(tokenString)
 		if err != nil || !token.Valid {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})

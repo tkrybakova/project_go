@@ -47,10 +47,10 @@ func main() {
 	router := gin.Default()
 	// Настройка CORS middleware
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://127.0.0.1:8081"}, // Разрешить запросы с вашего фронтенда
+		AllowOrigins:     []string{"http://192.168.1.107:8081"}, // Разрешить запросы с вашего фронтенда
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
+		ExposeHeaders:    []string{"Authorization"},
 		AllowCredentials: true,
 	}))
 	api.RegisterAuthRoutes(router)
