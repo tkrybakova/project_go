@@ -1,35 +1,45 @@
-const apiUrl = "http://localhost:8080/api"; // Настройте URL API по мере необходимости
-let lastNotifications = []; // Массив для отслеживания последних уведомлений
+const apiUrl = "http://localhost:8080/api";
+let lastNotifications = [];
+
+// Проверка наличия токена
+function getAuthHeaders() {
+    const token = localStorage.getItem("token");
+    return token ? { "Authorization": `Bearer ${token}` } : {};
+}
 
 // Функция для получения всех бригад и отображения их на странице
 async function fetchBrigades() {
     try {
-        const response = await fetch(`${apiUrl}/brigades/`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        const data = await response.json();
-        console.log('Бригады получены:', data); // Отладочный вывод
-        const brigadeList = document.getElementById('brigade-list');
-        brigadeList.innerHTML = ''; // Очистить список перед добавлением новых элементов
+        const response = await fetch(`${apiUrl}/brigades/`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders() // Добавляем токен в запрос
+            }
+        });
+        if (!response.ok) throw new Error('Ошибка при получении бригад: ' + response.statusText);
 
-        if (data.length === 0) {
-            brigadeList.innerHTML = '<li>Нет доступных бригад.</li>'; // Сообщение, если нет бригад
-        } else {
-            data.forEach(brigade => {
+        const data = await response.json();
+        const brigadeList = document.getElementById('brigade-list');
+        if (!brigadeList) return; // Прекращаем выполнение, если элемента нет
+
+        brigadeList.innerHTML = '';
+        data.length === 0
+            ? brigadeList.innerHTML = '<li>Нет доступных бригад.</li>'
+            : data.forEach(brigade => {
                 const listItem = document.createElement('li');
-                // Обновляем текст, чтобы включить ID
                 listItem.textContent = `ID: ${brigade.id}, Бригада: ${brigade.name}, Статус: ${brigade.status}`;
                 brigadeList.appendChild(listItem);
             });
-        }
     } catch (error) {
-        console.error('Ошибка при получении бригад:', error);
+        console.error(error);
     }
 }
 
 // Функция для создания бронирования
 async function createBooking() {
+    if (!elementExists('bookingOutput')) return; // Прекращаем выполнение, если элемента нет
+
     const slotId = document.getElementById("slotId").value;
     const date = document.getElementById("date").value;
     const status = document.getElementById("status").value;
@@ -37,14 +47,13 @@ async function createBooking() {
     try {
         const response = await fetch(`${apiUrl}/bookings/`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ slot_id: slotId, date: date, status: status })
+            headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders()
+            },
+            body: JSON.stringify({ slot_id: slotId, date, status })
         });
-
-        if (!response.ok) {
-            throw new Error(`Error creating booking: ${response.statusText}`);
-        }
-
+        if (!response.ok) throw new Error(`Ошибка создания бронирования: ${response.statusText}`);
         const result = await response.json();
         document.getElementById("bookingOutput").textContent = JSON.stringify(result, null, 2);
     } catch (error) {
@@ -53,162 +62,118 @@ async function createBooking() {
     }
 }
 
-
-// Функция для получения уведомлений
+// Функции для уведомлений
 async function fetchNotifications() {
     try {
         const response = await fetch(`${apiUrl}/notifications`, {
             method: "GET",
-            headers: { "Content-Type": "application/json" }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
         });
 
-        if (!response.ok) {
-            throw new Error(`Error fetching notifications: ${response.statusText}`);
-        }
-
-        const notifications = await response.json();
-        return notifications; // Возвращаем уведомления для дальнейшей обработки
+        if (!response.ok) throw new Error(`Ошибка получения уведомлений: ${response.statusText}`);
+        return await response.json();
     } catch (error) {
         console.error(error);
-        return []; // Возвращаем пустой массив в случае ошибки
+        return [];
     }
 }
 
-// Функция для отображения уведомлений
 function displayNotifications(notifications) {
     const notificationsDiv = document.getElementById("notificationsOutput");
+    if (!notificationsDiv) return; // Прекращаем выполнение, если элемента нет
+
     notificationsDiv.innerHTML = ""; // Очищаем предыдущие уведомления
 
     notifications.forEach(notification => {
         const notificationElement = document.createElement("div");
         notificationElement.classList.add("notification");
         notificationElement.textContent = notification;
-
-        // CSS для плавного появления
-        notificationElement.style.opacity = 0; // Начинаем невидимо
+        notificationElement.style.opacity = 0;
         notificationsDiv.appendChild(notificationElement);
-
-        // Эффект плавного появления
-        setTimeout(() => {
-            notificationElement.style.opacity = 1; // Плавно появляется
-        }, 50); // Короткая задержка для рендеринга
+        setTimeout(() => { notificationElement.style.opacity = 1; }, 50);
     });
 }
 
-// Функция для загрузки и отображения уведомлений
 async function loadAndDisplayNotifications() {
     const notifications = await fetchNotifications();
-
-    // Показать новые уведомления, если они изменились
     if (JSON.stringify(notifications) !== JSON.stringify(lastNotifications)) {
-        lastNotifications = notifications; // Обновляем последние уведомления
-        displayNotifications(notifications); // Отображаем уведомления
+        lastNotifications = notifications;
+        displayNotifications(notifications);
     }
 }
 
 // Основной код для работы с DOM
-document.addEventListener("DOMContentLoaded", function() {
-    // Обработчики событий для форм создания бригад
-    document.getElementById('create-brigade-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const brigadeName = document.getElementById('brigade-name').value;
-        const brigadeStatus = document.getElementById('brigade-status').value;
+document.addEventListener("DOMContentLoaded", function () {
+    if (elementExists('create-brigade-form')) {
+        document.getElementById('create-brigade-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const brigadeName = document.getElementById('brigade-name').value;
+            const brigadeStatus = document.getElementById('brigade-status').value;
 
-        // Отправка данных о бригаде на сервер
-        fetch(`${apiUrl}/brigades/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name: brigadeName, status: brigadeStatus })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert('Бригада создана: ' + data.id);
-            fetchBrigades(); // Обновить список бригад
-            document.getElementById('create-brigade-form').reset();
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Ошибка при создании бригады');
-        });
-    });
-
-    // Обработчики событий для форм создания задач
-    document.getElementById('create-task-form').addEventListener('submit', async function(event) {
-        event.preventDefault();
-    
-        const taskBrigadeId = parseInt(document.getElementById('task-brigade-id').value);
-        const taskDescription = document.getElementById('task-description').value;
-        const assignedDateInput = document.getElementById('task-assignedat').value; // YYYY-MM-DD
-        const taskAssignedAt = new Date(assignedDateInput + "T00:00:00Z").toISOString(); // Преобразование в ISO формат
-        const taskStatus = document.getElementById('task-status').value;
-    
-        // Логируем данные перед отправкой
-        console.log('Данные перед отправкой:', {
-            brigade_id: taskBrigadeId,
-            description: taskDescription,
-            assigned_at: taskAssignedAt,
-            status: taskStatus
-        });
-    
-        try {
-            const response = await fetch(`http://localhost:8080/api/tasks/`, {
+            fetch(`${apiUrl}/brigades/`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
                 },
-                body: JSON.stringify({
-                    brigade_id: taskBrigadeId,
-                    description: taskDescription,
-                    assigned_at: taskAssignedAt,
-                    status: taskStatus
+                body: JSON.stringify({ name: brigadeName, status: brigadeStatus })
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Ошибка создания бригады');
+                    return response.json();
                 })
-            });
-    
-            if (!response.ok) {
-                const errorDetails = await response.json();
-                throw new Error('Ошибка сервера: ' + JSON.stringify(errorDetails));
-            }
-    
-            const data = await response.json();
-            alert('Задача создана с ID: ' + data.id);
-            document.getElementById('create-task-form').reset();
-        } catch (error) {
-            console.error('Ошибка при создании задачи:', error);
-            alert('Ошибка при создании задачи: ' + error.message);
-        }
-    });
-});
-async function createBrigade(brigadeData) {
-    try {
-        const response = await fetch(`${apiUrl}/brigades/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(brigadeData),
+                .then(data => {
+                    alert('Бригада создана: ' + data.id);
+                    fetchBrigades();
+                    document.getElementById('create-brigade-form').reset();
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('Ошибка при создании бригады');
+                });
         });
-
-        if (!response.ok) {
-            throw new Error('Ошибка создания бригады: ' + response.statusText);
-        }
-
-        const data = await response.json();
-        console.log('Бригада создана:', data);
-    } catch (error) {
-        console.error('Ошибка при создании бригады:', error);
     }
-}
 
+    if (elementExists('create-task-form')) {
+        document.getElementById('create-task-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const taskBrigadeId = parseInt(document.getElementById('task-brigade-id').value);
+            const taskDescription = document.getElementById('task-description').value;
+            const taskAssignedAt = new Date(document.getElementById('task-assignedat').value + "T00:00:00Z").toISOString();
+            const taskStatus = document.getElementById('task-status').value;
+
+            try {
+                const response = await fetch(`${apiUrl}/tasks/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`
+                    },
+                    body: JSON.stringify({
+                        brigade_id: taskBrigadeId,
+                        description: taskDescription,
+                        assigned_at: taskAssignedAt,
+                        status: taskStatus
+                    })
+                });
+
+                if (!response.ok) throw new Error('Ошибка создания задачи');
+                const data = await response.json();
+                alert('Задача создана с ID: ' + data.id);
+                document.getElementById('create-task-form').reset();
+            } catch (error) {
+                console.error('Ошибка при создании задачи:', error);
+                alert('Ошибка при создании задачи: ' + error.message);
+            }
+        });
+    }
+});
 
 // Загрузка уведомлений сразу при загрузке страницы
 window.onload = async () => {
-    await loadAndDisplayNotifications(); // Получаем и отображаем уведомления при загрузке
-    setInterval(loadAndDisplayNotifications, 5000); // Обновление уведомлений каждые 5 секунд
+    await loadAndDisplayNotifications();
+    setInterval(loadAndDisplayNotifications, 5000);
 };
