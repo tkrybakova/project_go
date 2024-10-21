@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Уведомления</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
 </head>
 <body>
     <div class="container">
@@ -20,7 +22,11 @@
         <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
     </div>
 
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="js/main.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        checkAuthentication().then(() => {
+            document.querySelector('.container').style.display = 'block';
+        });
+    </script>
 </body>
 </html>

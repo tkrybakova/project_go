@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Booking and Notifications</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Driver Booking and Notifications</h1>
-
-        <!-- Бронирование -->
         <div class="section">
             <h2>Бронирование слота</h2>
             <input id="slotId" placeholder="Введите ID слота" />
@@ -23,10 +23,8 @@
             <button onclick="createBooking()">Забронировать слот</button>
             <pre id="bookingOutput"></pre>
         </div>
-
     </div>
 
-    <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <a href="index.html"><i class="fas fa-home"></i> Главная</a>
         <a href="notifications.html"><i class="fas fa-bell"></i> Уведомления</a>
@@ -35,7 +33,11 @@
         <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
     </div>
 
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="js/main.js"></script>
+    <script src="js/book.js"></script>
+    <script>
+        checkAuthentication().then(() => {
+            document.querySelector('.container').style.display = 'block';
+        });
+    </script>
 </body>
 </html>
