@@ -63,7 +63,6 @@ func getBooking(c *gin.Context) {
 	// Получаем бронирование из базы данных
 	booking, err := services.GetBookingByID(id)
 	if err != nil {
-		fmt.Println("Error fetching booking:", err) // Логируем ошибку
 		c.JSON(http.StatusNotFound, gin.H{"error": "Booking not found"})
 		return
 	}
