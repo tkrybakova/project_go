@@ -24,3 +24,5 @@ async function createBooking() {
 
 // Привязка обработчика события к кнопке
 document.getElementById("bookingButton").addEventListener("click", createBooking);
+
+

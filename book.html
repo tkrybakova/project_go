@@ -13,14 +13,17 @@
         <h1>Driver Booking and Notifications</h1>
         <div class="section">
             <h2>Бронирование слота</h2>
-            <input id="slotId" placeholder="Введите ID слота" />
-            <input id="date" type="date" placeholder="Выберите дату" />
-            <select id="status">
-                <option value="confirmed">Подтверждено</option>
-                <option value="pending">В ожидании</option>
-                <option value="canceled">Отменено</option>
-            </select>
-            <button onclick="createBooking()">Забронировать слот</button>
+            <div class="input-group">
+                <input id="slotId" type="text" placeholder="Введите ID слота" required />
+                <input id="date" type="date" placeholder="Выберите дату" required />
+                <select id="status" required>
+                    <option value="">Выберите статус</option>
+                    <option value="confirmed">Подтверждено</option>
+                    <option value="pending">В ожидании</option>
+                    <option value="canceled">Отменено</option>
+                </select>
+                <button onclick="createBooking()">Забронировать слот</button>
+            </div>
             <pre id="bookingOutput"></pre>
         </div>
     </div>
